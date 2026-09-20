@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "TRACEBACK",
+  "version": "1.0.0",
+  "description": "TRACKER // Digital time forensics for understanding how your browser time is spent.",
+  "permissions": ["tabs", "windows", "idle", "storage", "alarms"],
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "action": {
+    "default_title": "TRACEBACK",
+    "default_popup": "popup.html"
+  },
+  "host_permissions": [],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
