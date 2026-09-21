@@ -1,0 +1,15 @@
+{
+  "name": "traceback-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.19.2"
+  }
+}
