@@ -1,5 +1,7 @@
 const SETTINGS_KEY = 'traceback-settings-v1'
 const SESSION_KEY = 'traceback-sessions-v1'
+const API_BASE_URL_KEY = 'traceback-api-base-url'
+const DEFAULT_BACKEND_URL = 'http://localhost:3001'
 
 function normalizeDomain(rawUrl) {
   try {
@@ -69,6 +71,45 @@ async function isTrackingActive() {
   return Boolean(settings.trackingEnabled) && Boolean(settings.chromeActivityConsent)
 }
 
+async function getApiBaseUrl() {
+  const configured = await readState(API_BASE_URL_KEY, DEFAULT_BACKEND_URL)
+  if (typeof configured === 'string' && configured.trim()) {
+    return configured.trim().replace(/\/$/, '')
+  }
+  return DEFAULT_BACKEND_URL
+}
+
+async function syncSessionToBackend(session) {
+  try {
+    const baseUrl = await getApiBaseUrl()
+    const response = await fetch(`${baseUrl}/api/activity/bulk`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        events: [{
+          id: session.id,
+          application: session.title || session.domain || 'Browser',
+          domain: session.domain,
+          title: session.title || session.domain,
+          category: session.category || 'OTHER',
+          durationSeconds: 1,
+          startTime: session.startTime,
+          endTime: session.endTime,
+          eventType: session.eventType || 'page_visit',
+          source: 'chrome',
+        }],
+      }),
+      keepalive: true,
+    })
+
+    if (!response.ok) {
+      console.warn('TRACEBACK backend sync failed:', response.status)
+    }
+  } catch (error) {
+    console.warn('TRACEBACK backend sync unavailable:', error)
+  }
+}
+
 async function captureCurrentTab() {
   if (!(await isTrackingActive())) return
 
@@ -96,6 +137,7 @@ async function captureCurrentTab() {
   const existing = (await readState(SESSION_KEY, [])) || []
   const next = [...existing, session].slice(-250)
   await writeState(SESSION_KEY, next)
+  await syncSessionToBackend(session)
 }
 
 chrome.runtime.onInstalled.addListener(() => {
