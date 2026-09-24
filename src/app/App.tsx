@@ -1,14 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
-
 type Screen = "activation" | "booting" | "dashboard";
 type Tab = "today" | "timeline" | "history" | "reports" | "privacy";
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-const TIMELINE = [
+const TIMELINE = [ //change with real data this is still just a placeholder
   { time: "09:12", end: "09:36", cat: "RESEARCH",      domain: "google.com",         dur: "24 MIN", color: "#00A8FF", id: "TB-20260920-0042" },
   { time: "09:36", end: "10:17", cat: "PROGRAMMING",   domain: "github.com",          dur: "41 MIN", color: "#7B2FFF", id: "TB-20260920-0043" },
   { time: "10:17", end: "10:29", cat: "COMMUNICATION", domain: "mail.google.com",     dur: "12 MIN", color: "#C084FC", id: "TB-20260920-0044" },
@@ -19,7 +15,7 @@ const TIMELINE = [
   { time: "12:27", end: "13:09", cat: "COMMUNICATION", domain: "slack.com",           dur: "42 MIN", color: "#C084FC", id: "TB-20260920-0049" },
 ];
 
-const CATEGORIES = [
+const CATEGORIES = [ 
   { name: "PROGRAMMING",   time: "01H 33M", mins: 93,  color: "#7B2FFF" },
   { name: "RESEARCH",      time: "01H 12M", mins: 72,  color: "#00A8FF" },
   { name: "COMMUNICATION", time: "00H 54M", mins: 54,  color: "#C084FC" },
@@ -271,7 +267,6 @@ function Y2KToggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => vo
 function ActivationScreen({ onActivate }: { onActivate: () => void }) {
   const [isOn, setIsOn] = useState(false);
   const [hasConsent, setHasConsent] = useState(false);
-  const [showDataInfo, setShowDataInfo] = useState(false);
   const canActivate = isOn && hasConsent;
 
   useEffect(() => {
@@ -281,28 +276,8 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
   }, [canActivate, onActivate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 font-raj">
-      <div className="w-full max-w-[360px]">
-        {/* Window chrome */}
-        <div
-          className="flex items-center justify-between px-3 py-2"
-          style={{
-            background: "linear-gradient(180deg, rgba(123,47,255,0.45) 0%, rgba(80,20,160,0.28) 100%)",
-            border: "1px solid rgba(168,85,247,0.55)",
-            borderBottom: "none",
-          }}
-        >
-          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-purple-200">TRACEBACK</span>
-          <div className="flex items-center gap-2">
-            <span className="font-mono-tech text-[10px] tracking-[0.15em] text-purple-500">SYSTEM 01</span>
-            <div className="flex gap-1">
-              {[0,1,2].map(i => (
-                <div key={i} style={{ width: 8, height: 8, border: "1px solid rgba(123,47,255,0.5)", background: "rgba(123,47,255,0.1)" }} />
-              ))}
-            </div>
-          </div>
-        </div>
-
+    <div className="h-fit flex flex-col font-raj">
+      <div className="w-full">
         <Panel glow>
           <div
             className="absolute inset-0 pointer-events-none"
@@ -311,7 +286,7 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
             }}
           />
 
-          <div className="relative px-8 py-8 flex flex-col items-center gap-5">
+          <div className="relative px-8 py-6 flex flex-col items-center gap-4">
             {/* Logo */}
             <div className="text-center">
               <div
@@ -323,22 +298,6 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
               >
                 TRACEBACK
               </div>
-              <div className="font-mono-tech text-[9px] tracking-[0.35em] mt-1.5" style={{ color: "#5B3090" }}>
-                ACTIVITY RECONSTRUCTION
-              </div>
-            </div>
-
-            {/* Status badge */}
-            <div
-              className="px-5 py-1.5 font-mono-tech text-[11px] tracking-[0.2em] transition-all duration-300"
-              style={{
-                border: `1px solid ${isOn ? "rgba(168,85,247,0.55)" : "rgba(60,30,90,0.5)"}`,
-                color: isOn ? "#C084FC" : "#3A1060",
-                background: isOn ? "rgba(123,47,255,0.1)" : "rgba(8,0,16,0.7)",
-                boxShadow: isOn ? "0 0 12px rgba(123,47,255,0.25)" : "none",
-              }}
-            >
-              {isOn ? "● ON" : "○ OFF"}
             </div>
 
             {/* Toggle section */}
@@ -396,24 +355,25 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
               </label>
             </div>
 
-            <BevelButton onClick={() => setShowDataInfo(v => !v)} className="w-full justify-center text-center">
-              {showDataInfo ? "HIDE DATA DETAILS" : "WHAT DATA IS COLLECTED?"}
-            </BevelButton>
+            <div
+              className="w-full px-4 py-2 font-mono-tech text-[10px] tracking-[0.18em] uppercase text-center"
+              style={{
+                background: "rgba(18,0,32,0.9)",
+                border: "1px solid rgba(123,47,255,0.42)",
+                color: "#A855F7",
+                boxShadow: "inset 1px 1px 0 rgba(255,255,255,0.07), inset -1px -1px 0 rgba(0,0,0,0.5), 0 0 12px rgba(123,47,255,0.15)",
+              }}
+            >
+              WHAT DATA IS COLLECTED?
+            </div>
 
-            <AnimatePresence>
-              {showDataInfo && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="w-full overflow-hidden"
-                >
+            <div className="w-full">
                   <div
                     className="p-3 space-y-1"
                     style={{ border: "1px solid rgba(123,47,255,0.25)", background: "rgba(5,0,10,0.8)" }}
                   >
                     <div className="font-mono-tech text-[9px] tracking-[0.2em] text-purple-700 mb-2">COLLECTED DATA</div>
-                    {["Active tab / domain", "Session duration", "Tab switching events", "Idle periods"].map(item => (
+                    {["Active tab/domain", "Session duration", "Tab switching events", "Idle periods"].map(item => (
                       <div key={item} className="flex items-center gap-2">
                         <span className="font-mono-tech text-[10px]" style={{ color: "#B6FF00" }}>✓</span>
                         <span className="font-mono-tech text-[10px] text-purple-500">{item}</span>
@@ -427,29 +387,8 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
                       </div>
                     ))}
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* System status bar */}
-            <div
-              className="w-full px-3 py-2 flex items-center justify-between"
-              style={{
-                border: "1px solid rgba(123,47,255,0.2)",
-                background: "rgba(5,0,10,0.7)",
-              }}
-            >
-              <span className="font-mono-tech text-[9px] tracking-[0.18em] text-purple-800">SYSTEM STATUS</span>
-              <div className="flex items-center gap-2">
-                <LED active={canActivate} color={canActivate ? "#B6FF00" : "#7B2FFF"} />
-                <span
-                  className="font-mono-tech text-[9px] tracking-[0.15em] transition-colors"
-                  style={{ color: canActivate ? "#B6FF00" : "#3A1060" }}
-                >
-                  {canActivate ? "ACTIVATING" : "WAITING"}
-                </span>
-              </div>
             </div>
+
           </div>
         </Panel>
 
@@ -463,7 +402,7 @@ function ActivationScreen({ onActivate }: { onActivate: () => void }) {
   );
 }
 
-// ─── Boot screen ──────────────────────────────────────────────────────────────
+//Boot screen ──────────────────────────────────────────────────────────────
 
 function BootScreen({ onComplete }: { onComplete: () => void }) {
   const [lines, setLines] = useState<{ text: string; highlight?: boolean }[]>([]);
@@ -489,8 +428,8 @@ function BootScreen({ onComplete }: { onComplete: () => void }) {
   }, [onComplete]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center font-raj">
-      <div className="w-full max-w-[400px] px-6">
+    <div className="h-fit flex flex-col font-raj">
+      <div className="w-full flex-1">
         {/* Window chrome */}
         <div
           className="flex items-center justify-between px-3 py-2"
@@ -500,8 +439,8 @@ function BootScreen({ onComplete }: { onComplete: () => void }) {
             borderBottom: "none",
           }}
         >
-          <span className="font-mono-tech text-[10px] tracking-[0.25em] text-purple-200">TRACEBACK</span>
-          <span className="font-mono-tech text-[10px] tracking-[0.15em] text-purple-500">BOOT SEQUENCE</span>
+          <span className="shrink-0 whitespace-nowrap font-mono-tech text-[10px] tracking-[0.25em] text-purple-200">TRACEBACK</span>
+          <span className="shrink-0 whitespace-nowrap font-mono-tech text-[10px] tracking-[0.15em] text-purple-500">BOOT SEQUENCE</span>
         </div>
 
         <Panel>
@@ -540,26 +479,35 @@ function BootScreen({ onComplete }: { onComplete: () => void }) {
 
             {/* Terminal output */}
             <div className="space-y-0.5 min-h-[160px]">
-              {lines.map((line, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -6 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="font-mono-tech text-[11px] leading-6"
-                  style={{
-                    color: line.highlight
-                      ? line.text === "TRACEBACK ACTIVE" ? "#B6FF00" : "#C084FC"
-                      : "#6B5080",
-                    textShadow: line.text === "TRACEBACK ACTIVE"
-                      ? "0 0 14px rgba(182,255,0,0.6)"
-                      : line.highlight ? "0 0 10px rgba(192,132,252,0.4)" : "none",
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {line.text || " "}
-                </motion.div>
-              ))}
+              {lines.map((line, i) => {
+                const status = line.text.match(/^(.*?)\s+(\.+)\s+(READY)$/);
+
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="w-full font-mono-tech text-[11px] leading-6"
+                    style={{
+                      color: line.highlight
+                        ? line.text === "TRACEBACK ACTIVE" ? "#B6FF00" : "#C084FC"
+                        : "#6B5080",
+                      textShadow: line.text === "TRACEBACK ACTIVE"
+                        ? "0 0 14px rgba(182,255,0,0.6)"
+                        : line.highlight ? "0 0 10px rgba(192,132,252,0.4)" : "none",
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    {status ? (
+                      <span className="flex w-full items-center justify-between gap-4 whitespace-nowrap">
+                        <span>{status[1]}</span>
+                        <span>{status[2]} {status[3]}</span>
+                      </span>
+                    ) : line.text || " "}
+                  </motion.div>
+                );
+              })}
               {showCursor && (
                 <span
                   className="font-mono-tech text-[11px] text-purple-400"
@@ -1116,7 +1064,7 @@ function Dashboard() {
   const [isTracking] = useState(true);
 
   return (
-    <div className="min-h-screen flex flex-col font-raj">
+    <div className="h-fit flex flex-col font-raj">
       {/* Title bar / nav */}
       <div
         className="sticky top-0 z-40 flex items-center justify-between px-4 py-0"
@@ -1129,7 +1077,7 @@ function Dashboard() {
       >
         {/* Logo */}
         <div
-          className="font-orb text-[15px] font-black tracking-[0.28em]"
+          className="shrink-0 font-orb text-[15px] font-black tracking-[0.28em]"
           style={{
             color: "#C084FC",
             textShadow: "0 0 16px rgba(168,85,247,0.55)",
@@ -1139,12 +1087,12 @@ function Dashboard() {
         </div>
 
         {/* Tab nav */}
-        <div className="flex min-w-0 flex-1 items-stretch h-full">
+        <div className="flex min-w-0 flex-1 self-stretch items-stretch">
           {TABS.map(t => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className="min-w-0 flex-1 px-[clamp(0.25rem,1.5vw,0.75rem)] font-mono-tech text-[9px] tracking-[0.14em] transition-all duration-150 cursor-pointer uppercase whitespace-nowrap"
+              className="min-w-0 flex-1 px-[clamp(0rem,1.5vw,0.75rem)] font-mono-tech text-[clamp(0.38rem,1.2vw,0.5625rem)] tracking-[clamp(0em,0.4vw,0.14em)] transition-all duration-150 cursor-pointer uppercase whitespace-nowrap"
               style={{
                 height: "100%",
                 background: tab === t.id ? "rgba(123,47,255,0.18)" : "transparent",
@@ -1162,7 +1110,7 @@ function Dashboard() {
         <div className="flex items-center gap-2">
           <LED active={isTracking} color="#B6FF00" size={7} />
           <span
-            className="font-mono-tech text-[9px] tracking-[0.1em]"
+            className="hidden min-[30rem]:inline font-mono-tech text-[9px] tracking-[0.1em]"
             style={{ color: isTracking ? "#B6FF00" : "#3A1060" }}
           >
             TRACEBACK ● {isTracking ? "ON" : "OFF"}
@@ -1217,7 +1165,10 @@ export default function App() {
   const handleBootComplete = useCallback(() => setScreen("dashboard"), []);
 
   return (
-    <div className="relative min-h-screen" style={{ background: "#050008", fontFamily: "'Rajdhani', sans-serif" }}>
+    <div
+      className="relative h-fit"
+      style={{ background: "#050008", fontFamily: "'Rajdhani', sans-serif" }}
+    >
       <GlobalStyles />
       <GridBg />
       <Scanlines />
